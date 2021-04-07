@@ -13,27 +13,61 @@ subjectid.forEach(id => {
     dropdownMenu.append("option").text(id).property("value")
 })
 optionChanged(subjectid[0])
-   // function filterSample(samples[2]) {
-    //    return samples.sample_values;
-     //   return samples.otu_ids;
-      //  return samples.otu_labels;
+  
 });
+// Display an individual's demographic information
+// Display each key value pair from the metadata JSON object somewhere on the page.
 function demograph(nameid) {
     d3.json("data/samples.json").then((bellydata) => {
       bellymeta = bellydata.metadata
       filterid = bellymeta.filter(bm => bm.id == nameid)
       // fetching the first element
-      firstsample = filterid[0]
+      firstmeta = filterid[0]
       // referencing the sample metadata
       var demobox = d3.select("#sample-metadata")
-      Object.entries(firstsample).forEach(([key, value]) => {
+      Object.entries(firstmeta).forEach(([key, value]) => {
           demobox.append("option").text(`${key}, ${value}`)
       })
 })
 }
+
 function optionChanged(namesid) {
     demograph(namesid)
 }
+
+// Use D3 to select the bar chart
+ var barchart = d3.select("#bar");
+
+// Assign the value of the samples list to a variable
+//   var dataset = selectsamples.property("value");
+samplesid = bellydata.samples
+samplesid.forEach(id => {
+    barplot.append("tbody").text(id).property("value")
+    
+sampleas?(samplesid[0])
+  
+};
+function topOtu(sampleid) {
+    d3.json("data/samples.json").then((bellydata) => {
+      bellybar = bellydata.samples
+      filtersamp = bellybar.filter(bb => bb.id == sampleid)
+      // fetching the first element
+      firstsample = filterid[0]
+      // referencing the sample metadata
+      var demoplot = d3.select("#bar")
+      Object.entries(firstsample).forEach(([key, value]) => {
+          demoplot.append("option").text(`${key}, ${value}`)
+      })
+})
+}
+function topOtu(sampleid) {
+    topOtu(sampleid)
+}
+
+ // function filterSample(samples[2]) {
+    //    return samples.sample_values;
+     //   return samples.otu_ids;
+      //  return samples.otu_labels;
 
 //     // Sort the data array using the greekSearchResults value
 //     data.sort(function(a, b) {
