@@ -57,6 +57,11 @@ function optionChanged(person) {
 
 //cccccccccccccccccccccccccccccccccccccccccccccccc
 
+function optionChanged(person) {
+  demograph(person)
+   Plot(person)
+}
+
 function Plot(sample) {
   d3.json("data/samples.json").then((bellydata) => {
     console.log(bellydata);
