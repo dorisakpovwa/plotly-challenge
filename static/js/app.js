@@ -59,30 +59,34 @@ function optionChanged(person) {
 
 function optionChanged(person) {
   demograph(person)
-   Plot(person)
+  Plot(person)
 }
 
 function Plot(sample) {
   d3.json("data/samples.json").then((bellydata) => {
     console.log(bellydata);
     var samples = bellydata.samples;
-    var resultotu = samples.filter(sampleObj => sampleObj.otu_ids == sample_otu);
-    var samplev = samples.filter(sampleObj => sampleObj.sample_values == samplev);
+    var resultsamp = samples.filter(sampleObj => sampleObj.id == sample);
+    console.log(resultsamp)
+    // fetching the first element
+    var firstsam = resultsamp[0]
+    console.log(firstsam)
+    otuLabels = firstsam.otu_labels
+    sampleValues = firstsam.sample_values
+    otuIds = firstsam.otu_ids
+
     var trace = {
       type: "bar",
-      // mode: "lines",
-      // name: otu_labels,
-      // x: otu_ids,
-      // y: sample_values,
-      name: otu_labels,
-      x: resultotu,
-      y: samplev,
+     // name: otuLabels,
+      x: otuIds,
+      y: sampleValues,
       line: {
         color: "#17BECF",
       },
     };
-  })
-  Plotly.newPlot("bar", [trace]);
+    Plotly.newPlot("bar", trace);
+  });
+ 
 }
 
 
