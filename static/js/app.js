@@ -23,18 +23,18 @@ function demograph(person) {
     filterid = bellymeta.filter(bm => bm.id == person);
     // fetching the first element
     firstmeta = filterid[0];
-    // referencing the sample metadata with d3 to select the box id
+    // referencing the sample metadata with d3 to select the demograph box id
     var demobox = d3.select("#sample-metadata");
     // clear any existing metadata
     demobox.html("");
     // use object.entries to add each key and value pair to the box
     // use d3 to append new tags for each key value in metadata
     Object.entries(firstmeta).forEach(([key, value]) => {
-      demobox.append("option").text(`${key}, ${value}`)
-    })
-  })
-}
+      demobox.append("option").text(`${key}, ${value}`);
+    });
+  });
 
+}
 function optionChanged(person) {
   demograph(person)
 }
@@ -70,25 +70,69 @@ function Plot(sample) {
     console.log(resultsamp)
     // fetching the first element
     var firstsam = resultsamp[0]
-    console.log(firstsam)
-    otuLabels = firstsam.otu_labels
-    sampleValues = firstsam.sample_values
-    otuIds = firstsam.otu_ids
+    console.log(firstsam);
 
+    otuIds = firstsam.otu_ids;
+    otuLabels = firstsam.otu_labels;
+    sampleValues = firstsam.sample_values;
+    // Sort the data by otu_ids
+    var sortedByotuIds = otuIds.sort((a, b) => b.otuIds - a.otuIds);
+    // Slice the first 10 objects for plotting
+    slicedData = sortedByotuIds.slice(0, 10);
+    // Reverse the array to accommodate Plotly's defaults
+    reversedData = slicedData.reverse();
+    console.log(reversedData);
+    // ploting data
     var trace = {
       type: "bar",
-     // name: otuLabels,
-      x: otuIds,
-      y: sampleValues,
+      // name: otuLabels,
+      x: reversedData.map(obj => obj.otuIds),
+      y: reversedData.map(obj => obj.sampleValues),
       line: {
         color: "#17BECF",
       },
     };
     Plotly.newPlot("bar", trace);
   });
- 
+
 }
 
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+// // Sort the data by Greek search results
+// var sortedByGreekSearch = data.sort((a, b) => b.greekSearchResults - a.greekSearchResults);
+
+// // Slice the first 10 objects for plotting
+// slicedData = sortedByGreekSearch.slice(0, 10);
+
+// // Reverse the array to accommodate Plotly's defaults
+// reversedData = slicedData.reverse();
+
+// // Trace1 for the Greek Data
+// var trace1 = {
+//   x: reversedData.map(object => object.greekSearchResults),
+//   y: reversedData.map(object => object.greekName),
+//   text: reversedData.map(object => object.greekName),
+//   name: "Greek",
+//   type: "bar",
+//   orientation: "h"
+// };
+
+// // data
+// var data = [trace1];
+
+// // Apply the group bar mode to the layout
+// var layout = {
+//   title: "Greek gods search results",
+//   margin: {
+//     l: 100,
+//     r: 100,
+//     t: 100,
+//     b: 100
+//   }
+// };
+
+// // Render the plot to the div tag with id "plot"
+// Plotly.newPlot("plot", data, layout);
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     // Use D3 to select the bar chart
