@@ -2,7 +2,7 @@
 // The data from the JSON file is arbitrarily named importedData as the argument
 d3.json("data/samples.json").then((importedData) => {
   var bellydata = importedData;
-  console.log(bellydata);
+  // console.log(bellydata);
   // Use D3 to select the dropdown menu 
   var dropdownMenu = d3.select("#selDataset");
   // Assign the value of the dropdown menu option to a variable
@@ -35,9 +35,9 @@ function demograph(person) {
   });
 
 }
-function optionChanged(person) {
-  demograph(person)
-}
+//function optionChanged(person) {
+// demograph(person)
+//}
 /////////////
 
 
@@ -82,30 +82,39 @@ function Plot(sample) {
     // Reverse the array to accommodate Plotly's defaults
     reversedData = slicedData.reverse();
     console.log(reversedData);
-    // ploting data
+    // ploting trace data
     var trace = {
-      type: "bar",
       // name: otuLabels,
       x: reversedData.map(obj => obj.otuIds),
       y: reversedData.map(obj => obj.sampleValues),
-      line: {
-        color: "#17BECF",
-      },
+      text: reversedData.map(obj => obj.otu_labels),
+      type: "bar",
+      orientation: "h"
     };
-    Plotly.newPlot("bar", trace);
-  });
+    //  line: {
+    //    color: "#17BECF",
+    //   };
 
+    // data
+    var data = [trace];
+
+    // Apply the group bar mode to the layout
+    var layout = {
+      title: "OTU",
+      margin: {
+        l: 100,
+        r: 100,
+        t: 100,
+        b: 100
+      }
+    };
+
+    // Render the plot to the div tag with id "bar"
+    Plotly.newPlot("bar", data, layout);
+  });
 }
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-// // Sort the data by Greek search results
-// var sortedByGreekSearch = data.sort((a, b) => b.greekSearchResults - a.greekSearchResults);
-
-// // Slice the first 10 objects for plotting
-// slicedData = sortedByGreekSearch.slice(0, 10);
-
-// // Reverse the array to accommodate Plotly's defaults
-// reversedData = slicedData.reverse();
 
 // // Trace1 for the Greek Data
 // var trace1 = {
