@@ -1,7 +1,7 @@
 // Use D3.json() fetch to read the JSON file
 // The data from the JSON file is arbitrarily named importedData as the argument
-d3.json("data/samples.json").then((importedData) => {
-  var bellydata = importedData;
+d3.json("data/samples.json").then((bellydata) => {
+ // var bellydata = importedData;
   // console.log(bellydata);
   // Use D3 to select the dropdown menu 
   var dropdownMenu = d3.select("#selDataset");
@@ -30,7 +30,7 @@ function demograph(person) {
     // use object.entries to add each key and value pair to the box
     // use d3 to append new tags for each key value in metadata
     Object.entries(firstmeta).forEach(([key, value]) => {
-      demobox.append("option").text(`${key}, ${value}`);
+      demobox.append("option").text(`${key}: ${value}`);
     });
   });
 
@@ -64,6 +64,7 @@ function optionChanged(person) {
 
 function Plot(sample) {
   d3.json("data/samples.json").then((bellydata) => {
+    console.log('plot call')
     console.log(bellydata);
     var samples = bellydata.samples;
     var resultsamp = samples.filter(sampleObj => sampleObj.id == sample);
@@ -72,22 +73,29 @@ function Plot(sample) {
     var firstsam = resultsamp[0]
     console.log(firstsam);
 
-    otuIds = firstsam.otu_ids;
-    otuLabels = firstsam.otu_labels;
-    sampleValues = firstsam.sample_values;
+    var otuIds = firstsam.otu_ids;
+    //var otuLabels = firstsam.otu_labels;
+    // var sampleValues = firstsam.sample_values;
     // Sort the data by otu_ids
-    var sortedByotuIds = otuIds.sort((a, b) => b.otuIds - a.otuIds);
+    //var sortedByotuIds = otuIds.sort((a, b) => b.otuIds - a.otuIds);
     // Slice the first 10 objects for plotting
-    slicedData = sortedByotuIds.slice(0, 10);
-    // Reverse the array to accommodate Plotly's defaults
-    reversedData = slicedData.reverse();
+    var slicedData = otuIds.slice(0, 10).map(otus => `OTU ${otus}`);
+    console.log(slicedData)
+    var samp = firstsam["sample_values"].slice(0, 10);
+    //Reverse the array to accommodate Plotly's defaults
+    var reversedData = slicedData.reverse();
     console.log(reversedData);
-    // ploting trace data
+    var reversedsample = samp.reverse();
+    //ploting trace data
     var trace = {
       // name: otuLabels,
-      x: reversedData.map(obj => obj.otuIds),
-      y: reversedData.map(obj => obj.sampleValues),
-      text: reversedData.map(obj => obj.otu_labels),
+      y: reversedData,
+      x: reversedsample,
+    
+    // x: firstsam["sample_values"].slice(0, 10),
+      // x: reversedDat.map(obj => obj.sampleValues),
+      // y: reversedData.map(obj => obj.otuIds),
+      //text: reversedData.map(obj => obj.otu_labels),
       type: "bar",
       orientation: "h"
     };
@@ -100,7 +108,9 @@ function Plot(sample) {
 
     // Apply the group bar mode to the layout
     var layout = {
-      title: "OTU",
+      title: "Top ten OTUs",
+      "x-axis": "Total OTU samples",
+      "y-axis": "OTU NAME ID",
       margin: {
         l: 100,
         r: 100,
@@ -114,6 +124,7 @@ function Plot(sample) {
   });
 }
 
+//init()
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 // // Trace1 for the Greek Data
