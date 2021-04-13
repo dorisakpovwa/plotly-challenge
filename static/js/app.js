@@ -1,69 +1,56 @@
 // Use D3.json() fetch to read the JSON file
-// The data from the JSON file is arbitrarily named importedData as the argument
+// The data from the JSON file is arbitrarily named bellydata as the argument
 d3.json("data/samples.json").then((bellydata) => {
-  // var bellydata = importedData;
   // console.log(bellydata);
   // Use D3 to select the dropdown menu 
   var dropdownMenu = d3.select("#selDataset");
   // Assign the value of the dropdown menu option to a variable
   idnames = bellydata.names
+  // select each id in the data
   idnames.forEach(id => {
     dropdownMenu.append("option").text(id).property("value", id);
   });
   //build initial plots with first sample on the list
   optionChanged(idnames[0])
-
 });
+//////////////
 // Display an individual's demographic information
-// Display each key value pair from the metadata JSON object somewhere on the page.
+// Display each key value pair from the metadata JSON object on the page.
 function demograph(person) {
   d3.json("data/samples.json").then((bellydata) => {
+    //Create a variable that holds the metadata.
     bellymeta = bellydata.metadata;
-    // filter the data with the object with the desired sample number
+    // filter the data with the object with the desired sample number using id
     filterid = bellymeta.filter(bm => bm.id == person);
     // fetching the first element
     firstmeta = filterid[0];
+
+    // create a variable that selects the washing frequency for bonus activity
+    var wfreqs = firstmeta.wfreq;
+
     // referencing the sample metadata with d3 to select the demograph box id
     var demobox = d3.select("#sample-metadata");
-    // clear any existing metadata
+    // clear any existing metadata to make the dashboard display only current data
     demobox.html("");
     // use object.entries to add each key and value pair to the box
     // use d3 to append new tags for each key value in metadata
     Object.entries(firstmeta).forEach(([key, value]) => {
       demobox.append("option").text(`${key}: ${value}`);
     });
+    // call the gaugeChart function
+    gaugeChart(wfreqs);
   });
-
 }
-//function optionChanged(person) {
-// demograph(person)
-//}
-/////////////
 
-
-// // 1. Create the buildChart function.
-// function buildCharts(sample) {
-//   // 2. Use d3.json to load the samples.json file   
-//   d3.json("data/samples.json").then((bellydata) => {
-//     // 3. Create a variable that holds the samples array.     
-//     var samples = bellydata.samples;
-//     // 4. Create a variable that filters the samples for the object with the desired sample number.    
-//     var resultArray = samples.filter(sampleObj => sampleObj.otu_ids == sample);
-//     //  5. Create a variable that holds the first sample in the array.    
-//     var result = resultArray[0];
-//   });
-//   buildCharts(sample)
-// }
-
-//cccccccccccccccccccccccccccccccccccccccccccccccc
+/////////// call the functions
 
 function optionChanged(person) {
   demograph(person)
-  Plot(person)
+  barPlot(person)
   buildChart(person)
 }
-
-function Plot(sample) {
+// build the barchart function
+function barPlot(sample) {
   d3.json("data/samples.json").then((bellydata) => {
     console.log('plot call')
     console.log(bellydata);
@@ -104,9 +91,9 @@ function Plot(sample) {
 
     // Apply the group bar mode to the layout
     var layout = {
-      title: "Top ten OTUs",
-      "x-axis": "Total OTU samples",
-      "y-axis": "OTU NAME ID",
+      title: "Top Ten OTUs in Individual",
+      //"x-axis": "Total OTU samples",
+     // "y-axis": "OTU NAME ID",
       margin: {
         l: 100,
         r: 100,
@@ -121,12 +108,10 @@ function Plot(sample) {
 }
 
 //init()
-
-//ccccccccccccccccccccccccccccccccccccccc
-
+/////////
+// build the bubblechart function and pass id_number as parameter
 function buildChart(id_number) {
-  //start bubble chart here can start at line 24 
-  //d3.json('../../samples.json').then(data=> {
+
   d3.json("data/samples.json").then((bellydata) => {
     var samples2 = bellydata['samples'];
     // filter functions takes an array and returns an array
@@ -157,7 +142,7 @@ function buildChart(id_number) {
       marker: {
         size: sample_dict["sample_values"],
         color: otu_ids2,
-    //    colorscale: "blue"
+        colorscale: "blue"
       }
     };
     var data = [data2];
@@ -170,30 +155,30 @@ function buildChart(id_number) {
    }
     // Render the plot to the div tag with id "bubble"
     Plotly.newPlot('bubble', data, layout2 )
-  
   });
-  //Plotly.newPlot('bubble', trace2, layout2)
-  //build_table(id_number)
 }
 
-
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    // Use D3 to select the bar chart
-    //var chartid = d3.select("#bar");
-    // Assign the value of the samples list to a variable
-//     function plot(bellydata) {
-//         var sampleValues = bellydata.samples.sample_values.map(0);
-//         var otuIds = bellydata.samples.otu_ids.map(0);
-//         var otuLabels = bellydata.samples.otu_labels;
+// Bonus//
+// creating gauge function to determine washing frequency of individuals
+function gaugeChart(wfreqs) {
+  var trace3 = [{
+    domain: {x:[0-1], y:[0-1]}, 
+    values: wfreqs,
+    type: "indicator", 
+    mode: "gauge+number", 
+    gauge: {axis: {range:[0, 9]},
+    steps: [{range: [0, 4.5], color: "blue"}, {range: [4.5, 9], color: "red"}]},
+    title: {text: "Washing Frequency per Individual"},
+  }]
+  var layout3 = { 
+    width: 500, 
+    height: 500, 
+    margin: { t: 0, b: 0 },
+   };
 
-//         console.log(sampleValues)
-//         console.log(otuIds)
-//         console.log(sotuLabels)
+  Plotly.newPlot('gauge', trace3, layout3)
+}
 
-//     }
-
-//  })
-
-//  }
 
 
