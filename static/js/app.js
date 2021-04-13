@@ -1,7 +1,7 @@
 // Use D3.json() fetch to read the JSON file
 // The data from the JSON file is arbitrarily named importedData as the argument
 d3.json("data/samples.json").then((bellydata) => {
- // var bellydata = importedData;
+  // var bellydata = importedData;
   // console.log(bellydata);
   // Use D3 to select the dropdown menu 
   var dropdownMenu = d3.select("#selDataset");
@@ -60,6 +60,7 @@ function demograph(person) {
 function optionChanged(person) {
   demograph(person)
   Plot(person)
+  buildChart(person)
 }
 
 function Plot(sample) {
@@ -91,11 +92,6 @@ function Plot(sample) {
       // name: otuLabels,
       y: reversedData,
       x: reversedsample,
-    
-    // x: firstsam["sample_values"].slice(0, 10),
-      // x: reversedDat.map(obj => obj.sampleValues),
-      // y: reversedData.map(obj => obj.otuIds),
-      //text: reversedData.map(obj => obj.otu_labels),
       type: "bar",
       orientation: "h"
     };
@@ -125,34 +121,61 @@ function Plot(sample) {
 }
 
 //init()
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-// // Trace1 for the Greek Data
-// var trace1 = {
-//   x: reversedData.map(object => object.greekSearchResults),
-//   y: reversedData.map(object => object.greekName),
-//   text: reversedData.map(object => object.greekName),
-//   name: "Greek",
-//   type: "bar",
-//   orientation: "h"
-// };
+//ccccccccccccccccccccccccccccccccccccccc
 
-// // data
-// var data = [trace1];
+function buildChart(id_number) {
+  //start bubble chart here can start at line 24 
+  //d3.json('../../samples.json').then(data=> {
+  d3.json("data/samples.json").then((bellydata) => {
+    var samples2 = bellydata['samples'];
+    // filter functions takes an array and returns an array
+    var filtered_samples2 = samples2.filter(sampleObj2 => sampleObj2.id == id_number);
+    //var filtered_samples2 = samples.filter(item => item.id==id_number)
+    var sample_dict = filtered_samples2[0];
+    var otu_ids2 = sample_dict['otu_ids'];
+  //  var bubbleData = otu_ids2.map(otus => `OTUs ${otus}`);
 
-// // Apply the group bar mode to the layout
-// var layout = {
-//   title: "Greek gods search results",
-//   margin: {
-//     l: 100,
-//     r: 100,
-//     t: 100,
-//     b: 100
-//   }
-// };
+    // var trace2 = {
+    //   type: 'bubble',
+    //   y: 'filtered_samples2',
+    //   x: 'otu_ids2'
+    // };
+    // var layout2 = {
+    //   'title': 'OTUs Measured',
+    //   'x-axis': 'OTU IDs',
+    //   'y-axis': 'Sample Values',
+    // };
 
-// // Render the plot to the div tag with id "plot"
-// Plotly.newPlot("plot", data, layout);
+    console.log(sample_dict);
+    //var data2 = [trace2];
+    data2 = {
+      x: otu_ids2,
+      y: sample_dict["sample_values"],
+      text: sample_dict["otu_labels"],
+      mode: "markers", 
+      marker: {
+        size: sample_dict["sample_values"],
+        color: otu_ids2,
+    //    colorscale: "blue"
+      }
+    };
+    var data = [data2];
+    var layout2 = {
+      title: "Sample Bubble Chart",
+      hovermode: "closet",
+     xaxis: { title: ('otu_ids') },
+     yaxis: { title: ('sample values') }
+
+   }
+    // Render the plot to the div tag with id "bubble"
+    Plotly.newPlot('bubble', data, layout2 )
+  
+  });
+  //Plotly.newPlot('bubble', trace2, layout2)
+  //build_table(id_number)
+}
+
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     // Use D3 to select the bar chart
